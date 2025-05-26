@@ -16,11 +16,11 @@ begin
     begin
         if decode_sig  = '1' then
         case ascii_in is
-            when "01100001" => decoded_out <= "10111000"; -- a
-            when "01100010" => decoded_out <= "00000000000000000000111010101";   -- b
-            when x"63" => decoded_out <= "00000000000011101011101";         -- c
-            when x"64" => decoded_out <= "000000000000000001110101";        -- d
-            when x"65" => decoded_out <= "000000000000000000000001";        -- e
+            when "01100001" => decoded_out <= "10111"; -- a
+            when "01100010" => decoded_out <= "111010101";   -- b
+            when "01100011" => decoded_out <= "11101011101";         -- c
+            when "01100100" => decoded_out <= "1110101";        -- d
+            when "01100101" => decoded_out <= "1";        -- e
             when x"66" => decoded_out <= "000000000000101011101";           -- f
             when x"67" => decoded_out <= "000000000000111011101";           -- g
             when x"68" => decoded_out <= "0000000000001010101";             -- h
