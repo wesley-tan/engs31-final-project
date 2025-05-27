@@ -47,17 +47,17 @@ begin
   ---------------------------------------
   -- State Register
   ---------------------------------------
-  process(clk)
+  StateUpdate: process(clk)
   begin
     if rising_edge(clk) then
       CS <= NS;
     end if;
-  end process;
+  end process StateUpdate;
 
   ---------------------------------------
-  -- Next-State Logic
+  -- Next State Logic
   ---------------------------------------
-  process(CS, Rx, tc_baud, tc_half_baud, tc_bit, Receive_en)
+  NextStateLogic: process(CS, Rx, tc_baud, tc_half_baud, tc_bit, Receive_en)
   begin
     NS <= CS;
     case CS is
@@ -89,12 +89,12 @@ begin
       when others =>
         NS <= idle;
     end case;
-  end process;
+  end process NextStateLogic;
 
   ---------------------------------------
   -- Output Logic
   ---------------------------------------
-  process(CS)
+  OutputLogic: process(CS)
   begin
     shift_en      <= '0';
     clr_baud      <= '0';
@@ -103,7 +103,7 @@ begin
     tc_half_en    <= '0';
     tc_en         <= '0';
     rx_done_int   <= '0';
-    valid_int     <= '1';  -- assume valid unless disqualified
+    valid_int     <= '1'; 
 
     case CS is
       when idle =>
@@ -127,34 +127,46 @@ begin
         clr_bit     <= '1';
         -- check for valid ASCII
         if to_integer(unsigned(shift_reg(8 downto 1))) < 32 or
-           to_integer(unsigned(shift_reg(8 downto 1))) > 122 then
+           to_integer(unsigned(shift_reg(8 downto 1))) > 122 or (to_integer(unsigned(shift_reg(8 downto 1))) > 32 and to_integer(unsigned(shift_reg(8 downto 1)))<48) or 
+           (to_integer(unsigned(shift_reg(8 downto 1))) > 57 and to_integer(unsigned(shift_reg(8 downto 1)))<97) then
           valid_int <= '0';
         end if;
 
       when others =>
-        null;
+        shift_en      <= '0';
+        clr_baud      <= '0';
+        clr_bit       <= '0';
+        clr_shift_reg <= '0';
+        tc_half_en    <= '0';
+        tc_en         <= '0';
+        rx_done_int   <= '0';
+        valid_int     <= '1'; 
+
     end case;
-  end process;
+  end process OutputLogic;
 
   ---------------------------------------
   -- Datapath: Baud counter & bit counter
   ---------------------------------------
-  process(clk)
+  Datapath: process(clk)
   begin
     if rising_edge(clk) then
+      baud_counter <= baud_counter + 1;
       if clr_baud = '1' then
         baud_counter <= (others => '0');
-      else
-        baud_counter <= baud_counter + 1;
-      end if;
-
-      if clr_bit = '1' then
-        bit_counter <= (others => '0');
-      elsif tc_baud = '1' or tc_half_baud = '1' then
-        bit_counter <= bit_counter + 1;
       end if;
     end if;
-  end process;
+    
+    if rising_edge(clk) then 
+     if tc_baud = '1' or tc_half_baud = '1' then
+        bit_counter <= bit_counter + 1;
+      end if;
+     if clr_bit = '1' then
+        bit_counter <= (others => '0');
+      end if;
+     
+    end if;
+  end process Datapath;
 
   ---------------------------------------
   -- Shift register
@@ -162,43 +174,42 @@ begin
   process(clk)
   begin
     if rising_edge(clk) then
-      if clr_shift_reg = '1' then
-        shift_reg <= (others => '0');
-      elsif shift_en = '1' then
+      if shift_en = '1' then
         shift_reg <= Rx & shift_reg(9 downto 1);
       end if;
+      if clr_shift_reg = '1' then
+        shift_reg <= (others => '0');
+      end if;
+     
     end if;
   end process;
 
   ---------------------------------------
   -- Terminal Count Checks
   ---------------------------------------
-  process(baud_counter)
+  baud_check: process(baud_counter)
   begin
+    tc_baud <= '0';
     if tc_en = '1' and baud_counter = BAUD_PERIOD - 1 then
       tc_baud <= '1';
-    else
-      tc_baud <= '0';
     end if;
-  end process;
+  end process baud_check;
 
-  process(baud_counter)
+  baud_half_check: process(baud_counter)
   begin
+    tc_half_baud <= '0';
     if tc_half_en = '1' and baud_counter = BAUD_PERIOD_HALF - 1 then
       tc_half_baud <= '1';
-    else
-      tc_half_baud <= '0';
     end if;
-  end process;
+  end process baud_half_check;
 
-  process(bit_counter)
+  bit_check: process(bit_counter)
   begin
+    tc_bit <= '0';
     if bit_counter = BIT_COUNT - 1 then
       tc_bit <= '1';
-    else
-      tc_bit <= '0';
     end if;
-  end process;
+  end process bit_check;
 
   ---------------------------------------
   -- Output assignments
