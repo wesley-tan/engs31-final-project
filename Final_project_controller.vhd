@@ -4,7 +4,6 @@ use IEEE.std_logic_1164.all;
 entity Final_project_controller is
   port (
     clk          : in  std_logic;
-    Rx_en        : in  std_logic;   -- External trigger to start RX
     valid        : in  std_logic;   -- Asserted when ASCII character is valid
     Process_done : in  std_logic;   -- Decoder completed and shift_reg is loaded
     Shift_done   : in  std_logic;   -- Done shifting entire Morse sequence
@@ -34,7 +33,7 @@ begin
   -----------------------------------------------
   -- 2. Next-State and Output Logic
   -----------------------------------------------
-  control_proc : process(state, Rx_en, valid, Process_done, Shift_done)
+  control_proc : process(state, valid, Process_done, Shift_done)
   begin
     -- Default outputs
     Receiver_en <= '0';
@@ -44,9 +43,7 @@ begin
     case state is
 
       when sIdle =>
-        if Rx_en = '1' then
           next_state <= sAccept;
-        end if;
 
       when sAccept =>
         Receiver_en <= '1';  -- Enable UART receiver
@@ -69,7 +66,7 @@ begin
         next_state <= sIdle;
 
       when others =>
-        next_state <= sError;
+        next_state <= sIdle;
 
     end case;
   end process;
