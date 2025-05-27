@@ -35,7 +35,6 @@ end component;
 component Final_project_controller is
   port (
     clk          : in  std_logic;
-    Rx_en        : in  std_logic;   -- External trigger to start RX
     valid        : in  std_logic;   -- Asserted when ASCII character is valid
     Process_done : in  std_logic;   -- Decoder completed and shift_reg is loaded
     Shift_done   : in  std_logic;   -- Done shifting entire Morse sequence
@@ -124,7 +123,6 @@ begin
   controller_inst : Final_project_controller
     port map (
       clk          => clk,
-      Rx_en        => rx_done,
       valid        => valid,
       Process_done => process_done,
       Shift_done   => shift_done,
