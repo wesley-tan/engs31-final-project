@@ -57,8 +57,8 @@ set_property PACKAGE_PIN W4 [get_ports {an_ext_port[3]}]
 ##====================================================================
 
 ## RIGHT LIGHTS
-set_property PACKAGE_PIN U16 [get_ports RC_ext_port]
-set_property IOSTANDARD LVCMOS33 [get_ports RC_ext_port]
+set_property PACKAGE_PIN U16 [get_ports led_out]
+set_property IOSTANDARD LVCMOS33 [get_ports led_out]
 
 set_property PACKAGE_PIN E19 [get_ports RB_ext_port]
 set_property IOSTANDARD LVCMOS33 [get_ports RB_ext_port]
