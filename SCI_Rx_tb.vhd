@@ -25,10 +25,10 @@ ARCHITECTURE testbench OF SCI_Rx_tb IS
     signal Parallel_out      : STD_LOGIC_VECTOR(7 downto 0) := (others => '0');
     signal Rx_done : std_logic;
     signal Valid : std_logic;
-    constant  BAUD_PERIOD : integer := 391;
+    constant  BAUD_PERIOD : integer := 104;
 
     -- Clock period definitions
-    constant clk_period : time := 100 ns; -- 10 MHz
+    constant clk_period : time := 1000 ns; -- 1 MHz
 
 BEGIN
 
