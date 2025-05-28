@@ -10,10 +10,10 @@ ARCHITECTURE testbench OF SCI_Rx_tb IS
     -- Component Declaration for the Unit Under Test (UUT)
     COMPONENT SCI_Rx
         PORT ( 	clk			: 	in 	STD_LOGIC;
-                Data_in		: 	in 	STD_LOGIC;
                 Rx 		: 	in 	STD_LOGIC;
                 Parallel_out :	out STD_LOGIC_VECTOR(7 downto 0);
-                Rx_done		:	out STD_Logic);
+                Rx_done		:	out STD_Logic;
+                Valid        : out std_logic);
     END COMPONENT;
     
     --Inputs
@@ -24,6 +24,7 @@ ARCHITECTURE testbench OF SCI_Rx_tb IS
     --Outputs
     signal Parallel_out      : STD_LOGIC_VECTOR(7 downto 0) := (others => '0');
     signal Rx_done : std_logic;
+    signal Valid : std_logic;
     constant  BAUD_PERIOD : integer := 391;
 
     -- Clock period definitions
@@ -34,10 +35,10 @@ BEGIN
     -- Instantiate the Unit Under Test (UUT)
     uut: SCI_Rx PORT MAP (
         clk     => clk,
-        Data_in => Data_in,
         Rx    => Rx,
         Parallel_out      => Parallel_out,
-        Rx_done => Rx_done
+        Rx_done => Rx_done,
+        Valid   => Valid
     );
 
     -- Clock process definitions
@@ -58,49 +59,78 @@ BEGIN
         wait for clk_period * 10;
         
         -- Scenario 1: Load data 
-        Data_in <= '1';
         Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
         
         -- Scenario 2: Load data "11001100"
-        Data_in <= '0';
-        Rx <= '0';  -- Load the data
+        Rx <= '1';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
         
         -- Scenario 2: Load data "11001100"
-        Data_in <= '1';
         Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
 
         
         
                 -- Scenario 2: Load data "11001100"
-        Data_in <= '0';
-     
+        Rx <= '1';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
 
-        
-        Data_in <= '1';
+        Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
         
-        Data_in <= '0';
+        Rx <= '1';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
         
-                
-        Data_in <= '1';
+        Rx <= '0';  -- Load the data  
         wait for BAUD_PERIOD* clk_period;
 
 
-        
-        Data_in <= '0';
+        Rx <= '1';  -- Load the data
         wait for BAUD_PERIOD*clk_period;
+        
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD*clk_period;
+        Rx <= '1';  -- Load the data
+		wait for 2*BAUD_PERIOD*clk_period;
+
+        -- Restart Transmission
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period;
+        
+        -- Scenario 2: Load data "11001100"
+        Rx <= '1';  -- Load the data
+        wait for BAUD_PERIOD* clk_period;
+        
+        -- Scenario 2: Load data "11001100"
+        Rx <= '1';  -- Load the data
+        wait for BAUD_PERIOD* clk_period;
+
+        
+        
+                -- Scenario 2: Load data "11001100"
+        Rx <= '1';  -- Load the data
+        wait for BAUD_PERIOD* clk_period;
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period;
+        
+        Rx <= '1';  -- Load the data
+        wait for BAUD_PERIOD* clk_period;
+        
+        Rx <= '0';  -- Load the data  
+        wait for BAUD_PERIOD* clk_period;
+
+
+        Rx <= '1';  -- Load the data
+        wait for BAUD_PERIOD*clk_period;
+        
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD*clk_period;
+        Rx <= '1';  -- Load the data
 		
-        Rx <= '1';
-		wait;
-
-        -- Wait for transmission to complete
-        wait for clk_period * 500;
-
+        
+        wait;
 
         -- Complete the simulation
         wait;
