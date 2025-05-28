@@ -15,9 +15,9 @@ end SCI_Rx;
 
 architecture Behavioral of SCI_Rx is
 
-  -- Baud settings for 25.6 kHz @ 100 MHz clk
-  constant BAUD_PERIOD      : integer := 391;
-  constant BAUD_PERIOD_HALF : integer := 195;
+
+  constant BAUD_PERIOD      : integer := 104;
+  constant BAUD_PERIOD_HALF : integer := 52;
   constant BIT_COUNT        : integer := 10;  -- start + 8 data + stop
 
   type state_type is (idle, wait_half, shift, wait_full, data_ready);
@@ -129,6 +129,8 @@ begin
            to_integer(unsigned(shift_reg)) > 122 or (to_integer(unsigned(shift_reg)) > 32 and to_integer(unsigned(shift_reg))<48) or 
            (to_integer(unsigned(shift_reg)) > 57 and to_integer(unsigned(shift_reg))<97) then
           valid_int <= '0';
+          
+        
         end if;
 
       when others =>
