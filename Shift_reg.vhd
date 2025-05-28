@@ -1,5 +1,6 @@
 
 
+
 -- Code your design here
 library IEEE;
 use IEEE.std_logic_1164.all;
@@ -7,9 +8,8 @@ use IEEE.numeric_std.all;
 
 ENTITY Shift_Reg IS
 PORT ( 	clk			: 	in 	STD_LOGIC;
-      	Process_done        :   in  STD_LOGIC;
-        Data_in		: 	in 	STD_LOGIC_VECTOR(21 downto 0);
-        Data_len 	:	in 	STD_LOGIC_VECTOR(4 downto 0);
+      	shift_en        :   in  STD_LOGIC;
+        Data_in		: 	in 	STD_LOGIC_VECTOR(26 downto 0);
         Output_bit :	out STD_LOGIC;
         shift_done : out STD_LOGIC);
 end Shift_Reg;
@@ -19,7 +19,6 @@ ARCHITECTURE behavior of Shift_Reg is
 
 signal shift_reg : std_logic_vector(21 downto 0) := (others => '0');
 signal counter : unsigned(4 downto 0) := "00000";
-signal allow_shifting : std_logic := '0';
 signal shift_done_sig : std_logic := '0';
 signal LENGTH : unsigned(4 downto 0);
 
@@ -29,8 +28,8 @@ BEGIN
 shift_register: process(clk) 
 begin 
 	if rising_edge(clk) then 
-    	if Process_done = '1' then 
-            shift_reg <= Data_in;
+    	if shift_en = '1' then 
+            shift_reg <= Data_in(26 downto 5);
         else 
           if shift_done_sig = '1' then
             counter <= (others => '0');
@@ -56,7 +55,7 @@ begin
 
 end process comparison;
 
-LENGTH <=unsigned(Data_Len);
+LENGTH <=unsigned(Data_in(4 downto 0));
 Output_bit <= shift_reg(21);
 
 shift_done <= shift_done_sig;
