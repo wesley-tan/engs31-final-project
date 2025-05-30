@@ -15,12 +15,12 @@ end SCI_Rx;
 
 architecture Behavioral of SCI_Rx is
 
-
+  -- Baud settings for 25.6 kHz @ 100 MHz clk
   constant BAUD_PERIOD      : integer := 104;
   constant BAUD_PERIOD_HALF : integer := 52;
   constant BIT_COUNT        : integer := 10;  -- start + 8 data + stop
 
-  type state_type is (idle, wait_half, shift, wait_full, data_ready);
+  type state_type is (idle, adjust, wait_half, shift, wait_full, data_ready);
   signal CS, NS : state_type := idle;
 
   signal shift_reg       : std_logic_vector(7 downto 0) := (others => '0');
@@ -64,7 +64,6 @@ begin
         if Rx = '0' then
           NS <= wait_half;
         end if;
-
       when wait_half =>
         if tc_half_baud = '1' then
           NS <= shift;
@@ -83,8 +82,7 @@ begin
         end if;
 
       when data_ready =>
-        NS <= idle;
-
+            NS <= idle;
       when others =>
         NS <= idle;
     end case;
@@ -126,11 +124,9 @@ begin
         clr_bit     <= '1';
         -- check for valid ASCII
         if to_integer(unsigned(shift_reg)) < 32 or
-           to_integer(unsigned(shift_reg)) > 122 or (to_integer(unsigned(shift_reg)) > 32 and to_integer(unsigned(shift_reg))<48) or 
+           to_integer(unsigned(shift_reg)) > 122 or 
            (to_integer(unsigned(shift_reg)) > 57 and to_integer(unsigned(shift_reg))<97) then
           valid_int <= '0';
-          
-        
         end if;
 
       when others =>
@@ -207,7 +203,7 @@ begin
   bit_check: process(bit_counter)
   begin
     tc_bit <= '0';
-    if bit_counter = BIT_COUNT then
+    if bit_counter = BIT_COUNT-1 then
       tc_bit <= '1';
     end if;
   end process bit_check;
