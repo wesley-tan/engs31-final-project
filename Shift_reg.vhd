@@ -31,6 +31,7 @@ begin
 	if rising_edge(clk) then 
     	if shift_en = '1' then 
             shift_reg <= decoded_out(26 downto 5);
+            counter <= (others => '0');
         else 
           if shift_done_sig = '1' then
             counter <= (others => '0');
