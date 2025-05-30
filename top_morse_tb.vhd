@@ -105,6 +105,41 @@ begin
         wait for BAUD_PERIOD*clk_period_divided;
         Rx <= '1';  -- Load the data
 		wait for BAUD_PERIOD*clk_period_divided;
+		
+		-- SPACE 
+		
+		Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+        Rx <= '1';  -- Load the data  
+        wait for BAUD_PERIOD* clk_period_divided;
+
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD*clk_period_divided;
+        
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD*clk_period_divided;
+        
+        Rx <= '1';  -- stop
+          
+        wait for BAUD_PERIOD*clk_period_divided;
 
         -- Restart Transmission 'a'
         Rx <= '0';  -- Load the data
