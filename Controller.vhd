@@ -7,6 +7,7 @@ entity controller_fsm is
     clk        : in  std_logic;
     empty      : in  std_logic; -- from queue
     shift_done : in  std_logic; -- from shift reg
+    enter      : in std_logic;
     read       : out std_logic; -- from decoder
     shift_en   : out std_logic
   );
@@ -26,7 +27,7 @@ begin
   end process;
   
   
-  process(cs,empty,shift_done)
+  process(cs,empty,enter,shift_done)
   begin
        shift_en <= '0';
        read <= '0';
@@ -34,7 +35,7 @@ begin
    
       case cs is
         when IDLE  => 
-            if empty='0' then 
+            if empty='0' and enter = '1' then 
                 ns <= POP; 
             end if;
         when POP   => 
@@ -44,8 +45,12 @@ begin
             shift_en <= '1';
             ns <= SHIFT;
         when SHIFT => 
-            if shift_done='1' then 
-                ns <= IDLE; 
+            if shift_done='1' then
+                if empty = '1' then 
+                    ns <= IDLE; 
+                else 
+                    ns <= POP;
+                end if;
             end if;
       end case;
 
