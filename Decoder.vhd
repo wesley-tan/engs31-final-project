@@ -1,12 +1,12 @@
+
+
 library IEEE;
 use IEEE.std_logic_1164.all;
 
 entity morse_decoder is
   port (
     clk          : in  std_logic;
-    data_out     : in  std_logic_vector(7 downto 0);
-    empty        : in  std_logic;                      -- ignored
-    shift_done   : in  std_logic;                      -- ignored
+    data_out     : in  std_logic_vector(7 downto 0);                    
     read         : in  std_logic;                      -- from controller
     decoded_out  : out std_logic_vector(26 downto 0) 
     -- shift_en     : out std_logic                       -- no longer generated here
@@ -20,9 +20,9 @@ begin
   begin
     if rising_edge(clk) then
       if read = '1' then             
-        case data_out is
-        
-        when "01100001" => 
+ case data_out is
+
+         when "01100001" => 
             decoded_out <= "101110000000000000000001000";
         when "01100010" => 
             decoded_out <= "111010101000000000000001100";
@@ -95,10 +95,10 @@ begin
         when "00111001" => 
             decoded_out <= "111011101110111010000010100";
         when "00100000" => 
-            decoded_out <= "000000000000000000000000111";
+            decoded_out <= "000000000000000000000000100";
         when others =>
             decoded_out <= (others => '0');
-      end case;
+        end case;
       end if;
     end if;
   end process;
