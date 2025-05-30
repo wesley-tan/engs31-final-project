@@ -7,7 +7,7 @@ ENTITY Queue IS
 PORT ( 	clk		:	in	STD_LOGIC; 
 		Write	: 	in 	STD_LOGIC;
 		read	: 	in 	STD_LOGIC;
-        Data_in	:	in	STD_LOGIC_VECTOR(7 downto 0);
+        parallel_out	:	in	STD_LOGIC_VECTOR(7 downto 0);
 		Data_out:	out	STD_LOGIC_VECTOR(7 downto 0);
         Empty	:	out	STD_LOGIC;
         Full	:	out	STD_LOGIC);
@@ -34,7 +34,7 @@ begin
     
     --Basic Queue Logic
     	if (Write = '1') and (Full_sig = '0') then
-        	Queue_reg(W_ADDR) <= Data_in;
+        	Queue_reg(W_ADDR) <= parallel_out;
             if W_ADDR = QUEUE_LENGTH-1 then
             	W_ADDR <= 0;
       		else
