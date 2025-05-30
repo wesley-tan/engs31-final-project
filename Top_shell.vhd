@@ -2,146 +2,164 @@ library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
 
-entity top_morse is
+--============================================================
+--  Top-level entity
+--============================================================
+entity Top_Morse is
   port (
-    clk         : in  std_logic;  -- 100 MHz clock
-    Rx          : in  std_logic;  -- UART Rx input from host
-    led_out     : out std_logic -- output, later add in sound_out
+    clk        : in  std_logic;  -- 100?MHz master clock
+    rx    : in  std_logic;  -- RS-232 RX after level shift
+    led_out : out std_logic;  -- Dot/dash LED (same as output_bit)
+    sound_out : out std_logic   -- Audio gate (mirrors morse_led)
   );
-end top_morse;
+end entity Top_Morse;
 
-architecture Behavioral_architecture of top_morse is
+--============================================================
+--  Architecture
+--============================================================
+architecture Behavioral of Top_Morse is
 
--- ALL COMPONENTS HERE
-component SCI_Rx is
-  port (
-    clk          : in  std_logic;
-    Rx           : in  std_logic;
-    Receive_en   : in  std_logic;
-    Parallel_out : out std_logic_vector(7 downto 0);
-    Rx_done      : out std_logic;
-    Valid        : out std_logic
-  );
- end component;
+  ------------------------------------------------------------------
+  --  Component declarations (EXACT names & ports)
+  ------------------------------------------------------------------
+  component SCI_Rx                                                 -- U_RX
+    port (
+      clk          : in  std_logic;
+      rx      : in  std_logic;
+      parallel_out      : out std_logic_vector(7 downto 0);
+      rx_done : out std_logic;
+      valid        : out std_logic
+    );
+  end component;
+
+  component Queue                                                       -- U_FIFO
+    port (
+      clk       : in  std_logic;
+      write     : in  std_logic;
+      parallel_out   : in  std_logic_vector(7 downto 0);
+      read      : in  std_logic;
+      data_out  : out std_logic_vector(7 downto 0);
+      empty     : out std_logic;
+      full      : out std_logic
+    );
+  end component;
+
+  component morse_decoder
+    port (
+      clk          : in  std_logic;
+      data_out     : in  std_logic_vector(7 downto 0);
+      empty        : in  std_logic;
+      shift_done   : in std_logic;
+      read         : out std_logic;
+      decoded_out  : out std_logic_vector(26 downto 0);  -- {22-bit data, 5-bit len}
+      shift_en     : out std_logic
+    );
+  end component;
+
+  component Shift_Reg                                                   -- U_SHFT
+    port (
+      clk         : in  std_logic;
+      shift_en    : in std_logic;
+      decoded_out : in  std_logic_vector(26 downto 0);
+      output_bit  : out std_logic;
+      shift_done  : out std_logic
+    );
+  end component;
+
+  component system_clock_generation
+    port (
+      input_clk_port      : in  std_logic;
+      system_clk_port  : out std_logic
+    );
+  end component;
+
+  ------------------------------------------------------------------
+  --  Internal signals
+  ------------------------------------------------------------------
+  signal sys_clk          : std_logic;
+   
+  signal rx_data      : std_logic_vector(7 downto 0);
+  signal rx_done      : std_logic;
+  signal valid        : std_logic;
+
+  signal queue_out    : std_logic_vector(7 downto 0);
+  signal empty   : std_logic;
+  signal full    : std_logic;
+  signal read_en   : std_logic;
+
+  signal decoded_out  : std_logic_vector(26 downto 0);
+  signal shift_en   : std_logic;
+  signal shift_done   : std_logic;
  
-component morse_decoder is
-  port (
-    ascii_in  : in  std_logic_vector(7 downto 0);
-    morse_out : out std_logic_vector(21 downto 0);  -- 22-bit right-aligned stream
-    morse_len : out std_logic_vector(4 downto 0)    -- number-of-bits (0-31)
-  );
-end component;
-
-component Final_project_controller is
-  port (
-    clk          : in  std_logic;
-    valid        : in  std_logic;   -- Asserted when ASCII character is valid
-    Process_done : in  std_logic;   -- Decoder completed and shift_reg is loaded
-    Shift_done   : in  std_logic;   -- Done shifting entire Morse sequence
-    Receiver_en  : out std_logic;   -- Enables UART receiver
-    Error        : out std_logic    -- Optional error signal
-  );
-end component;
-
-component  clock_divider is
-  generic (
-    DIVISOR : integer := 100
-  );
-  port (
-    clk       : in  std_logic;
-    reset     : in  std_logic;
-    tick_T    : out std_logic
-  );
-end component;
-
-component Shift_Reg IS
-PORT ( 	clk			: 	in 	STD_LOGIC;
-      	Process_done        :   in  STD_LOGIC;
-        Data_in		: 	in 	STD_LOGIC_VECTOR(21 downto 0);
-        Data_len 	:	in 	STD_LOGIC_VECTOR(4 downto 0);
-        Output_bit :	out STD_LOGIC;
-        shift_done : out STD_LOGIC);
-end component ;
-
-  -- Internal signals
-  signal ascii_char    : std_logic_vector(7 downto 0);
-  signal rx_done       : std_logic;
-  signal valid         : std_logic;
-
-  signal morse_bits    : std_logic_vector(21 downto 0);
-  signal morse_len     : std_logic_vector(4 downto 0);
-
-
-  signal shift_done    : std_logic;
-  signal process_done  : std_logic;
-
-  signal tick_T        : std_logic;
-  signal receiver_en   : std_logic;
-  signal err_flag      : std_logic;
+  signal output_bit : std_logic;
 
 begin
-
-  --------------------------------------------------------------------
-  -- 1. UART Receiver
-  --------------------------------------------------------------------
-  uart_rx_inst : SCI_Rx
+  ------------------------------------------------------------------
+  -- 0. Clock
+  ------------------------------------------------------------------
+  clock_divider_inst : system_clock_generation
     port map (
-      clk          => clk,
-      Rx           => Rx,
-      Receive_en   => receiver_en,
-      Parallel_out => ascii_char,
-      Rx_done      => rx_done,
-      Valid        => valid
+      input_clk_port  => clk,
+      system_clk_port => sys_clk
     );
 
-  --------------------------------------------------------------------
-  -- 2. Morse Decoder
-  --------------------------------------------------------------------
-  morse_decoder_inst : morse_decoder
+  ------------------------------------------------------------------
+  -- 1. UART receiver
+  ------------------------------------------------------------------
+  SCI_Rx_inst : SCI_Rx
     port map (
-      ascii_in   => ascii_char,
-      morse_out  => morse_bits,
-      morse_len  => morse_len
+      clk          => sys_clk,
+      rx           => rx,
+      parallel_out => rx_data,
+      rx_done      => rx_done,
+      valid        => valid
     );
 
-  --------------------------------------------------------------------
-  -- 3. Shift Register
-  --------------------------------------------------------------------
+  ------------------------------------------------------------------
+  -- 2. FIFO queue
+  ------------------------------------------------------------------
+  queue_inst : Queue
+    port map (
+      clk          => sys_clk,
+      write        => rx_done,
+      parallel_out => rx_data,
+      read         => read_en,
+      data_out     => queue_out,
+      empty        => empty,
+      full         => full
+    );
+
+  ------------------------------------------------------------------
+  -- 3. Decoder FSM
+  ------------------------------------------------------------------
+  decoder_inst : morse_decoder
+    port map (
+      clk         => sys_clk,
+      data_out    => queue_out,
+      empty       => empty,
+      shift_done  => shift_done,
+      read        => read_en,
+      decoded_out => decoded_out,
+      shift_en => shift_en
+    );
+
+  ------------------------------------------------------------------
+  -- 4. Shift register
+  ------------------------------------------------------------------
   shift_reg_inst : Shift_Reg
     port map (
-      clk          => clk,
-      Process_done => process_done,
-      Data_in      => morse_bits,
-      Data_len     => morse_len,
-      Output_bit   => led_out,
-      shift_done   => shift_done
+      clk         => sys_clk,
+      shift_en    => shift_en,
+      decoded_out => decoded_out,
+      output_bit  => output_bit,
+      shift_done  => shift_done
     );
 
-  --------------------------------------------------------------------
-  -- 4. Controller FSM
-  --------------------------------------------------------------------
-  controller_inst : Final_project_controller
-    port map (
-      clk          => clk,
-      valid        => valid,
-      Process_done => process_done,
-      Shift_done   => shift_done,
-      Receiver_en  => receiver_en,
-      Error        => err_flag
-    );
-
-  --------------------------------------------------------------------
-  -- 5. Clock Divider (T = 100 ms)
-  --------------------------------------------------------------------
-  clk_div_inst : clock_divider
-    generic map (
-      DIVISOR => 100
-    )
-    port map (
-      clk    => clk,
-      reset  => shift_done,
-      tick_T => tick_T
-    );
+  ------------------------------------------------------------------
+  -- 5. Audio gate mirrors the LED
+  ------------------------------------------------------------------
+  led_out <= output_bit;
+  sound_out <= output_bit;
 
 
 end architecture;
