@@ -20,7 +20,7 @@ architecture Behavioral of SCI_Rx is
   constant BAUD_PERIOD_HALF : integer := 52;
   constant BIT_COUNT        : integer := 10;  -- start + 8 data + stop
 
-  type state_type is (idle, adjust, wait_half, shift, wait_full, data_ready);
+  type state_type is (idle, wait_half, shift, wait_full, data_ready);
   signal CS, NS : state_type := idle;
 
   signal shift_reg       : std_logic_vector(7 downto 0) := (others => '0');
@@ -82,7 +82,9 @@ begin
         end if;
 
       when data_ready =>
-            NS <= idle;
+        if tc_half_baud = '1' then
+          NS <= idle;
+        end if;
       when others =>
         NS <= idle;
     end case;
@@ -121,7 +123,7 @@ begin
 
       when data_ready =>
         rx_done_int <= '1';
-        clr_bit     <= '1';
+        tc_half_en <= '1';
         -- check for valid ASCII
         if to_integer(unsigned(shift_reg)) < 32 or
            to_integer(unsigned(shift_reg)) > 122 or 
