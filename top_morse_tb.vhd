@@ -1,4 +1,4 @@
--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 --  tb_top_morse.vhd
 -------------------------------------------------------------------------------
 library IEEE;
@@ -75,21 +75,16 @@ begin
         
         wait for clk_period_divided * 10;
         
-        -- Scenario 1: Load data 
+        -- Scenario 1: Load data with '1'
         Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period_divided;
         
-        -- Scenario 2: Load data "11001100"
         Rx <= '1';  -- Load the data
         wait for BAUD_PERIOD* clk_period_divided;
         
-        -- Scenario 2: Load data "11001100"
         Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period_divided;
 
-        
-        
-                -- Scenario 2: Load data "11001100"
         Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period_divided;
 
@@ -115,17 +110,13 @@ begin
         Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period_divided;
         
-        -- Scenario 2: Load data "11001100"
         Rx <= '1';  -- Load the data
         wait for BAUD_PERIOD* clk_period_divided;
         
-        -- Scenario 2: Load data "11001100"
+
         Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period_divided;
 
-        
-        
-                -- Scenario 2: Load data "11001100"
         Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period_divided;
 
@@ -146,8 +137,42 @@ begin
         wait for BAUD_PERIOD*clk_period_divided;
         
         Rx <= '1';  -- stop
+          
+        wait for BAUD_PERIOD*clk_period_divided;
+          
+          
+        -- restart transmission 'enter'
 		
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
         
+        Rx <= '1';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+
+        Rx <= '1';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+
+        Rx <= '1';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+        Rx <= '0';  -- Load the data  
+        wait for BAUD_PERIOD* clk_period_divided;
+
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD*clk_period_divided;
+        
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD*clk_period_divided;
+        
+        Rx <= '1';  -- stop
         wait;
  
   end process;
