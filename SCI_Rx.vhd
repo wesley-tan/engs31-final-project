@@ -8,6 +8,7 @@ entity SCI_Rx is
     Rx           : in  std_logic;
     Parallel_out : out std_logic_vector(7 downto 0);
     Rx_done      : out std_logic;
+    Write        : out std_logic;
     Valid        : out std_logic
   );
 end SCI_Rx;
@@ -15,12 +16,12 @@ end SCI_Rx;
 
 architecture Behavioral of SCI_Rx is
 
-
+  -- Baud settings for 25.6 kHz @ 100 MHz clk
   constant BAUD_PERIOD      : integer := 104;
   constant BAUD_PERIOD_HALF : integer := 52;
   constant BIT_COUNT        : integer := 10;  -- start + 8 data + stop
 
-  type state_type is (idle, wait_half, shift, wait_full, data_ready);
+  type state_type is (idle, wait_half, shift, wait_full, adjust, data_ready);
   signal CS, NS : state_type := idle;
 
   signal shift_reg       : std_logic_vector(7 downto 0) := (others => '0');
@@ -37,6 +38,8 @@ architecture Behavioral of SCI_Rx is
   signal clr_shift_reg   : std_logic := '0';
   signal tc_en           : std_logic := '0';
   signal tc_half_en      : std_logic := '0';
+  
+  signal write_sig : std_logic:= '0';
 
   signal rx_done_int     : std_logic := '0';
   signal valid_int       : std_logic := '0';
@@ -64,7 +67,6 @@ begin
         if Rx = '0' then
           NS <= wait_half;
         end if;
-
       when wait_half =>
         if tc_half_baud = '1' then
           NS <= shift;
@@ -72,7 +74,7 @@ begin
 
       when shift =>
         if tc_bit = '1' then
-          NS <= data_ready;
+          NS <= adjust;
         else
           NS <= wait_full;
         end if;
@@ -82,9 +84,12 @@ begin
           NS <= shift;
         end if;
 
+      when adjust =>
+           NS <= data_ready;
       when data_ready =>
-        NS <= idle;
-
+        if tc_half_baud = '1' then
+          NS <= idle;
+        end if;
       when others =>
         NS <= idle;
     end case;
@@ -103,6 +108,7 @@ begin
     tc_en         <= '0';
     rx_done_int   <= '0';
     valid_int     <= '1'; 
+    write_sig     <= '0';
 
     case CS is
       when idle =>
@@ -120,17 +126,18 @@ begin
 
       when wait_full =>
         tc_en <= '1';
+      
+      when adjust =>
+        write_sig <= '1';
 
       when data_ready =>
         rx_done_int <= '1';
-        clr_bit     <= '1';
+        tc_half_en <= '1';
         -- check for valid ASCII
         if to_integer(unsigned(shift_reg)) < 32 or
-           to_integer(unsigned(shift_reg)) > 122 or (to_integer(unsigned(shift_reg)) > 32 and to_integer(unsigned(shift_reg))<48) or 
+           to_integer(unsigned(shift_reg)) > 122 or 
            (to_integer(unsigned(shift_reg)) > 57 and to_integer(unsigned(shift_reg))<97) then
           valid_int <= '0';
-          
-        
         end if;
 
       when others =>
@@ -207,7 +214,7 @@ begin
   bit_check: process(bit_counter)
   begin
     tc_bit <= '0';
-    if bit_counter = BIT_COUNT then
+    if bit_counter = BIT_COUNT-1 then
       tc_bit <= '1';
     end if;
   end process bit_check;
@@ -218,6 +225,7 @@ begin
   Parallel_out <= shift_reg;  -- exclude start/stop bits
   Rx_done      <= rx_done_int;
   Valid        <= valid_int;
+  write         <= write_sig;
 end Behavioral;
         
         
