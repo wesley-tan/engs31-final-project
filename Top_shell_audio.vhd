@@ -12,7 +12,9 @@ entity Top_Morse is
     clk        : in  std_logic;  -- 100MHz master clock
     rx    : in  std_logic;  -- RS-232 RX after level shift
     led_out : out std_logic;  -- Dot/dash LED (same as output_bit)
-    sound_out : out std_logic   -- Audio gate (mirrors morse_led)
+    sound_out : out std_logic;   -- Audio gate (mirrors morse_led)
+    amp_gain        : out std_logic;     -- JA2 → '1'
+    amp_shutdown_l  : out std_logic      -- JA4 → '1'
   );
 end entity Top_Morse;
 
@@ -119,9 +121,9 @@ architecture Behavioral of Top_Morse is
   -- -------------- TONE-GENERATION SIGNALS ------------------------
   -- A 440 Hz square wave generator, gated by output_bit
   signal tone_clk      : std_logic := '0';
-  signal tone_counter  : unsigned(16 downto 0) := (others => '0');
+  signal tone_counter  : unsigned(17 downto 0) := (others => '0');
   -- TONE_N ≈ 100 MHz / (2 × 440 Hz) = 113636
-  constant TONE_N      : unsigned(16 downto 0) := to_unsigned(113636, 17);
+  constant TONE_N      : unsigned(17 downto 0) := to_unsigned(227272, 18);
   
 begin
   ------------------------------------------------------------------
@@ -183,7 +185,10 @@ begin
       output_bit  => output_bit,
       shift_done  => shift_done
     );
-    
+  
+  amp_gain       <= '1';
+  amp_shutdown_l <= '1';
+  
   ctrl : controller_fsm
     port map (
       clk        => sys_clk,
