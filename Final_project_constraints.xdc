@@ -180,14 +180,14 @@ set_property PACKAGE_PIN U16 [get_ports {led_out}]
 set_property PACKAGE_PIN J1 [get_ports {sound_out}]					
 	set_property IOSTANDARD LVCMOS33 [get_ports {sound_out}]
 ##Sch name = JA2
-#set_property PACKAGE_PIN L2 [get_ports {JA_ext_port[1]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JA_ext_port[1]}]
-##Sch name = JA3
-#set_property PACKAGE_PIN J2 [get_ports {JA_ext_port[2]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JA_ext_port[2]}]
-##Sch name = JA4
-#set_property PACKAGE_PIN G2 [get_ports {JA_ext_port[3]}]					
-	#set_property IOSTANDARD LVCMOS33 [get_ports {JA_ext_port[3]}]
+## AMP2 GAIN (JA2) = '1' (normal gain)
+set_property PACKAGE_PIN L2 [get_ports {amp_gain}]
+    set_property IOSTANDARD LVCMOS33 [get_ports {amp_gain}]
+
+## AMP2 SHUTDOWN_L (JA4) = '1' (keep amp enabled)
+set_property PACKAGE_PIN G2 [get_ports {amp_shutdown_l}]
+    set_property IOSTANDARD LVCMOS33 [get_ports {amp_shutdown_l}]
+
 ##Sch name = JA7
 #set_property PACKAGE_PIN H1 [get_ports {JA_ext_port[4]}]					
 	#set_property IOSTANDARD LVCMOS33 [get_ports {JA_ext_port[4]}]
