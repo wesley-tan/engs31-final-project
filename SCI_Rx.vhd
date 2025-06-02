@@ -9,6 +9,7 @@ entity SCI_Rx is
     Parallel_out : out std_logic_vector(7 downto 0);
     Rx_done      : out std_logic;
     Write        : out std_logic;
+    enter        : out std_logic;
     Valid        : out std_logic
   );
 end SCI_Rx;
@@ -40,6 +41,8 @@ architecture Behavioral of SCI_Rx is
   signal tc_half_en      : std_logic := '0';
   
   signal write_sig : std_logic:= '0';
+  signal enter_sig : std_logic:= '0';
+
 
   signal rx_done_int     : std_logic := '0';
   signal valid_int       : std_logic := '0';
@@ -109,6 +112,7 @@ begin
     rx_done_int   <= '0';
     valid_int     <= '1'; 
     write_sig     <= '0';
+    enter_sig     <= '0';
 
     case CS is
       when idle =>
@@ -128,17 +132,28 @@ begin
         tc_en <= '1';
       
       when adjust =>
-        write_sig <= '1';
-
+       if to_integer(unsigned(shift_reg)) = 32 or
+           (to_integer(unsigned(shift_reg)) > 64 and to_integer(unsigned(shift_reg))< 91) or
+           (to_integer(unsigned(shift_reg)) > 96 and to_integer(unsigned(shift_reg))<123) or 
+           (to_integer(unsigned(shift_reg)) > 47 and to_integer(unsigned(shift_reg))<58) then
+          write_sig <= '1';
+        end if;
+        
+   
       when data_ready =>
         rx_done_int <= '1';
         tc_half_en <= '1';
         -- check for valid ASCII
         if to_integer(unsigned(shift_reg)) < 32 or
            to_integer(unsigned(shift_reg)) > 122 or 
-           (to_integer(unsigned(shift_reg)) > 57 and to_integer(unsigned(shift_reg))<97) then
+           (to_integer(unsigned(shift_reg)) > 57 and to_integer(unsigned(shift_reg))<65) or (to_integer(unsigned(shift_reg)) > 90 and to_integer(unsigned(shift_reg))<97) then
           valid_int <= '0';
         end if;
+        
+        if to_integer(unsigned(shift_reg)) = 13 then 
+            enter_sig <= '1';
+        end if;
+  
 
       when others =>
         shift_en      <= '0';
@@ -226,6 +241,6 @@ begin
   Rx_done      <= rx_done_int;
   Valid        <= valid_int;
   write         <= write_sig;
+  
+  enter <= enter_sig;
 end Behavioral;
-        
-        
