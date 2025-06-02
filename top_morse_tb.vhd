@@ -25,9 +25,9 @@ architecture sim of tb_top_morse is
   -----------------------------------------------------------------------------
   --  Simulation constants
   -----------------------------------------------------------------------------
-  constant CLK_PERIOD  : time := 10 ns;           -- 1 MHz
+  constant CLK_PERIOD  : time := 10 ns;           -- 1?MHz
   constant clk_period_divided : time := 1000 ns;
-  constant BAUD_PERIOD: integer:= 104;      -- 9600 baud
+  constant BAUD_PERIOD: integer:= 104;      -- 9600?baud
     
 
   -----------------------------------------------------------------------------
@@ -105,6 +105,41 @@ begin
         wait for BAUD_PERIOD*clk_period_divided;
         Rx <= '1';  -- Load the data
 		wait for BAUD_PERIOD*clk_period_divided;
+		
+		-- SPACE 
+		
+		Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+        Rx <= '1';  -- Load the data  
+        wait for BAUD_PERIOD* clk_period_divided;
+
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD*clk_period_divided;
+        
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD*clk_period_divided;
+        
+        Rx <= '1';  -- stop
+          
+        wait for BAUD_PERIOD*clk_period_divided;
 
         -- Restart Transmission 'a'
         Rx <= '0';  -- Load the data
@@ -140,7 +175,38 @@ begin
           
         wait for BAUD_PERIOD*clk_period_divided;
           
+       Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+        Rx <= '1';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD* clk_period_divided;
+        
+        Rx <= '1';  -- Load the data  
+        wait for BAUD_PERIOD* clk_period_divided;
+
+
+        Rx <= '1';  -- Load the data
+        wait for BAUD_PERIOD*clk_period_divided;
+        
+        Rx <= '0';  -- Load the data
+        wait for BAUD_PERIOD*clk_period_divided;
+        
+        Rx <= '1';  -- stop
           
+        wait for BAUD_PERIOD*clk_period_divided;
         -- restart transmission 'enter'
 		
         Rx <= '0';  -- Load the data
