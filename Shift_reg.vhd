@@ -23,12 +23,20 @@ signal counter : unsigned(4 downto 0) := "00000";
 signal shift_done_sig : std_logic := '1';
 signal LENGTH : unsigned(4 downto 0);
 
+constant TIME_LENGTH : INTEGER := 1000000;
 
+
+signal transmit : STD_LOGIC;
+
+signal transmit_counter : unsigned(19 downto 0)  := (others => '0');
+
+signal clr_transmit_count: std_logic := '0';
 BEGIN
 
 shift_register: process(clk) 
 begin 
 	if rising_edge(clk) then 
+	    clr_transmit_count <= '0';
     	if shift_en = '1' then 
             shift_reg <= decoded_out(26 downto 5);
             counter <= (others => '0');
@@ -37,8 +45,11 @@ begin
             counter <= (others => '0');
             shift_reg <= (others => '0');
           else 
-            shift_reg <= shift_reg(20 downto 0) & '0';
-            counter <= counter + 1;
+            if transmit = '1' then 
+                clr_transmit_count <= '1';
+                shift_reg <= shift_reg(20 downto 0) & '0';
+                counter <= counter + 1;
+            end if;
           end if;
          end if;
     end if;
@@ -56,6 +67,24 @@ begin
   end if;
 
 end process comparison;
+
+
+count_transmit : process(clk, transmit_counter)
+begin
+
+    if rising_edge(clk) then 
+        if clr_transmit_count = '1' then 
+            transmit_counter <= (others => '0');
+        else
+            transmit_counter <= transmit_counter + 1;
+        end if;
+    end if;
+    
+    transmit <= '0';
+    if to_integer(transmit_counter) = TIME_LENGTH - 1 then 
+        transmit <= '1';
+    end if;
+end process count_transmit;
 
 LENGTH <=unsigned(decoded_out(4 downto 0));
 Output_bit <= shift_reg(21);
