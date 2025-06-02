@@ -28,7 +28,7 @@ ARCHITECTURE testbench OF SCI_Rx_tb IS
     constant  BAUD_PERIOD : integer := 104;
 
     -- Clock period definitions
-    constant clk_period : time := 1000 ns; -- 1 MHz
+    constant clk_period : time := 1000 ns; -- 10 MHz
 
 BEGIN
 
@@ -62,18 +62,17 @@ BEGIN
         Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
         
-        -- Scenario 2: Load data "11001100"
+     
         Rx <= '1';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
         
-        -- Scenario 2: Load data "11001100"
+    
         Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
 
         
         
-                -- Scenario 2: Load data "11001100"
-        Rx <= '1';  -- Load the data
+        Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
 
         Rx <= '0';  -- Load the data
@@ -82,11 +81,11 @@ BEGIN
         Rx <= '1';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
         
-        Rx <= '0';  -- Load the data  
+        Rx <= '1';  -- Load the data  
         wait for BAUD_PERIOD* clk_period;
 
 
-        Rx <= '1';  -- Load the data
+        Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD*clk_period;
         
         Rx <= '0';  -- Load the data
@@ -94,7 +93,7 @@ BEGIN
         Rx <= '1';  -- Load the data
 		wait for 2*BAUD_PERIOD*clk_period;
 
-        -- Restart Transmission
+        -- Restart Transmission '
         Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
         
