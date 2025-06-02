@@ -9,20 +9,19 @@ ARCHITECTURE testbench OF Shift_reg_tb IS
 
     -- Component Declaration for the Unit Under Test (UUT)
     COMPONENT Shift_reg
-  port (
-    clk          : in  std_logic;
-    process_done : in  std_logic;  -- pulse to load new data
-    Data_in      : in  std_logic_vector(21 downto 0);
-    Data_len     : in  std_logic_vector(4 downto 0);
-    Output_bit   : out std_logic
-  );
+    PORT (
+      clk         : in  STD_LOGIC;
+      shift_en    : in STD_LOGIC;
+      decoded_out : in  STD_LOGIC_VECTOR(26 downto 0);
+      output_bit  : out STD_LOGIC;
+      shift_done  : out STD_LOGIC
+    );
     END COMPONENT;
     
     --Inputs
     signal clk     : std_logic := '0';
-    signal Process_done : std_logic := '0';
-    signal Data_in : STD_LOGIC_VECTOR(21 downto 0) := (others => '0');
-    signal Data_len : STD_LOGIC_VECTOR(4 downto 0) := (others =>       '0');
+    signal shift_en : std_logic := '0';
+    signal decoded_out : STD_LOGIC_VECTOR(26 downto 0) := (others => '0');
     --Outputs
    
     signal Output_bit    : std_logic := '0';
@@ -36,10 +35,10 @@ BEGIN
     -- Instantiate the Unit Under Test (UUT)
     uut: Shift_reg PORT MAP (
         clk     => clk,
-        Process_done => Process_done,
-        Data_in    => Data_in,
-        Data_len      => Data_len,
-        Output_bit => Output_bit
+        shift_en => shift_en,
+        decoded_out    => decoded_out,
+        output_bit => Output_bit,
+        shift_done => shift_done
     );
 
     -- Clock process definitions
@@ -55,16 +54,28 @@ BEGIN
     stim_proc: process
     begin        
         -- Initialize Inputs
-        Process_done <= '0';
+        shift_en <= '0';
         
         wait for clk_period * 10;
         
-        Process_done <= '1';
+        shift_en <= '1';
         -- Scenario 1: Load data 
-        Data_in <= "1110101110100000000000";
-        Data_len <= "01110";
+        decoded_out <= "111010111010000000000001110";
+        
         wait for clk_period;
-        process_done <= '0';
+        shift_en <= '0';
+        wait for 20*clk_period;
+
+        
+        
+        
+         shift_en <= '1';
+        -- Scenario 1: Load data 
+        decoded_out <= "101110101000000000000001100";
+        wait for clk_period;
+        shift_en <= '0';
+        
+        
         wait for 30* clk_period;
         
        
