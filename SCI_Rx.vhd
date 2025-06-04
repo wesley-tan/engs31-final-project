@@ -101,7 +101,7 @@ begin
   ---------------------------------------
   -- Output Logic
   ---------------------------------------
-  OutputLogic: process(CS)
+  OutputLogic: process(CS, shift_reg)
   begin
     shift_en      <= '0';
     clr_baud      <= '0';
@@ -210,7 +210,7 @@ begin
   ---------------------------------------
   -- Terminal Count Checks
   ---------------------------------------
-  baud_check: process(baud_counter)
+  baud_check: process(baud_counter, tc_en)
   begin
     tc_baud <= '0';
     if tc_en = '1' and baud_counter = BAUD_PERIOD - 1 then
@@ -218,7 +218,7 @@ begin
     end if;
   end process baud_check;
 
-  baud_half_check: process(baud_counter)
+  baud_half_check: process(baud_counter, tc_half_en)
   begin
     tc_half_baud <= '0';
     if tc_half_en = '1' and baud_counter = BAUD_PERIOD_HALF - 1 then
