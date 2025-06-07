@@ -17,7 +17,7 @@ end SCI_Rx;
 
 architecture Behavioral of SCI_Rx is
 
-  -- Baud settings for 25.6 kHz @ 100 MHz clk
+  
   constant BAUD_PERIOD      : integer := 104;
   constant BAUD_PERIOD_HALF : integer := 52;
   constant BIT_COUNT        : integer := 10;  -- start + 8 data + stop
