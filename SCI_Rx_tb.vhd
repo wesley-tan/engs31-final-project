@@ -93,21 +93,20 @@ BEGIN
         Rx <= '1';  -- Load the data
 		wait for 2*BAUD_PERIOD*clk_period;
 
-        -- Restart Transmission '
+        -- Restart Transmission with new data
         Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
         
-        -- Scenario 2: Load data "11001100"
+    
         Rx <= '1';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
         
-        -- Scenario 2: Load data "11001100"
+        
         Rx <= '1';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
 
         
-        
-                -- Scenario 2: Load data "11001100"
+
         Rx <= '1';  -- Load the data
         wait for BAUD_PERIOD* clk_period;
 
@@ -126,7 +125,7 @@ BEGIN
         
         Rx <= '0';  -- Load the data
         wait for BAUD_PERIOD*clk_period;
-        Rx <= '1';  -- Load the data
+        Rx <= '1';  -- end the transmission
 		
         
         wait;
