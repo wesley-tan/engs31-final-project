@@ -1,4 +1,5 @@
 -- Code your design here
+-- Taken/Adapted from CS 56/ES 31 materials
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
