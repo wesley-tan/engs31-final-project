@@ -1,4 +1,5 @@
--- controller_fsm_tb.vhd  - very small "wave-only" test bench
+-- controller_fsm_tb.vhd
+
 library IEEE;
 use IEEE.std_logic_1164.all;
 
@@ -48,7 +49,7 @@ begin
     );
 
   -----------------------------------------------------------------
-  --  100?MHz clock
+  --  clock
   -----------------------------------------------------------------
   clk_proc : process
   begin
