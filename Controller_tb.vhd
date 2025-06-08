@@ -71,7 +71,7 @@ begin
     wait for CLK_PER;
     enter  <= '0';
 
-    -- POP ? LOAD occur automatically next two clocks
+    -- POP LOAD occur automatically next two clocks
     wait for 2*CLK_PER;
 
     -- FSM now in SHIFT; give it a done pulse
@@ -86,11 +86,13 @@ begin
     shift_done <= '1';                  -- done with second packet
     wait for CLK_PER;
     shift_done <= '0';
+    wait for 3*CLK_PER;
 
     -------------------------------------------------------------------
     -- Queue becomes empty, FSM returns to IDLE
     -------------------------------------------------------------------
     empty <= '1';
+    shift_done <= '1';
     wait for 10*CLK_PER;
 
     -------------------------------------------------------------------
