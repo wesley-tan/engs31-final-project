@@ -13,8 +13,8 @@ entity Top_Morse is
     rx    : in  std_logic;  -- RS-232 RX after level shift
     led_out : out std_logic;  -- Dot/dash LED (same as output_bit)
     sound_out : out std_logic;   -- Audio gate (mirrors morse_led)
-    amp_gain        : out std_logic;     -- JA2 ? '1'
-    amp_shutdown_l  : out std_logic      -- JA4 ? '1'
+    amp_gain        : out std_logic;     
+    amp_shutdown_l  : out std_logic 
   );
 end entity Top_Morse;
 
@@ -119,10 +119,10 @@ architecture Behavioral of Top_Morse is
   
 
   -- -------------- TONE-GENERATION SIGNALS ------------------------
-  -- A 440?Hz square wave generator, gated by output_bit
+  -- square wave generator, gated by output_bit
   signal tone_clk      : std_logic := '0';
   signal tone_counter  : unsigned(19 downto 0) := (others => '0');
-  -- TONE_N ? 100?MHz / (2 × 440?Hz) = 113636
+  -- TONE_N 100 MHz / (2 × 440?Hz) = 113636, but we use this number multiplied by 4 to make the sound of a lower pitch
   constant TONE_N      : unsigned(19 downto 0) := to_unsigned(909088, 20);
   
 begin
@@ -200,7 +200,7 @@ begin
     );
 
   ------------------------------------------------------------------
-  --  5. Tone generator: divide sys_clk ? 440?Hz on tone_clk
+  --  5. Tone generator: divide sys_clk
   ------------------------------------------------------------------
   tone_divider : process(clk)
   begin
