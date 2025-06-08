@@ -63,8 +63,8 @@ begin
     data_out <= x"61"; read <= '1';  wait for CLK_PER;
     read <= '0';                     wait for 30 ns;
 
-    -- transmit 'e' (0x65)
-    data_out <= x"65"; read <= '1';  wait for CLK_PER;
+    -- transmit '!' (0x21)
+    data_out <= x"21"; read <= '1';  wait for CLK_PER;
     read <= '0';                     wait for 30 ns;
 
     -- transmit space (0x20)
@@ -75,8 +75,8 @@ begin
     data_out <= x"32"; read <= '1';  wait for CLK_PER;
     read <= '0';                     wait for 30 ns;
 
-    -- transmit 'z' (0x7A)
-    data_out <= x"7A"; read <= '1';  wait for CLK_PER;
+    -- transmit 'A' (0x41)
+    data_out <= x"41"; read <= '1';  wait for CLK_PER;
     read <= '0';                     wait for 30 ns;
 
     wait;                             -- keep simulation running
