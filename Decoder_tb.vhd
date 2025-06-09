@@ -8,7 +8,7 @@ end entity;
 architecture testbench of morse_decoder_tb is
 
   -----------------------------------------------------------------
-  --  DUT declaration
+  --  UUT declaration
   -----------------------------------------------------------------
   component morse_decoder is
     port (
@@ -33,7 +33,7 @@ architecture testbench of morse_decoder_tb is
 begin
 
   -----------------------------------------------------------------
-  --  Instantiate DUT
+  --  Instantiate UUT
   -----------------------------------------------------------------
   uut : morse_decoder
     port map (
@@ -57,23 +57,23 @@ begin
   begin
     wait for 50 ns;                  -- settle after reset
 
-    -- transmit 'a' (0x61)
+    -- transmit 'a'
     data_out <= x"61"; read <= '1';  wait for CLK_PER;
     read <= '0';                     wait for 30 ns;
 
-    -- transmit '!' (0x21)
+    -- transmit '!'
     data_out <= x"21"; read <= '1';  wait for CLK_PER;
     read <= '0';                     wait for 30 ns;
 
-    -- transmit space (0x20)
+    -- transmit space 
     data_out <= x"20"; read <= '1';  wait for CLK_PER;
     read <= '0';                     wait for 30 ns;
 
-    -- transmit '2' (0x32)
+    -- transmit '2' 
     data_out <= x"32"; read <= '1';  wait for CLK_PER;
     read <= '0';                     wait for 30 ns;
 
-    -- transmit 'A' (0x41)
+    -- transmit 'A' 
     data_out <= x"41"; read <= '1';  wait for CLK_PER;
     read <= '0';                     wait for 30 ns;
 
