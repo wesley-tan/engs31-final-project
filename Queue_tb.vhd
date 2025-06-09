@@ -13,7 +13,7 @@ architecture testbench of Queue_tb is
   -----------------------------------------------------------------
   component Queue is
     port (
-      clk          : in  STD_LOGIC;               -- 10?MHz clock (100 ns)
+      clk          : in  STD_LOGIC;               -- 10MHz clock (100 ns)
       Write        : in  STD_LOGIC;
       read         : in  STD_LOGIC;
       parallel_out : in  STD_LOGIC_VECTOR(7 downto 0);
