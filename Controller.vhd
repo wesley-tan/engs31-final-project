@@ -19,13 +19,18 @@ architecture behavior of controller_fsm is
   
 begin
 
+    -- ++++++++++++++
+      --  State  Transitions
+  --+++++++++++++++++++
   process(clk)
   begin
     if rising_edge(clk) then
         cs <= ns;
     end if;
   end process;
-  
+  -- ++++++++++++++
+      -- Next State Logic and Output Logic
+  --+++++++++++++++++++
   
   process(cs,empty,enter,shift_done)
   begin
