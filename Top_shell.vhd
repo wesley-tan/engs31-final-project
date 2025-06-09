@@ -88,11 +88,6 @@ architecture Behavioral of Top_Morse is
     );
   end component;
 
--- The following code must appear in the VHDL architecture
--- body. Substitute your own instance name and net names.
-
-
-
   ------------------------------------------------------------------
   --  Internal signals
   ------------------------------------------------------------------
@@ -122,7 +117,7 @@ architecture Behavioral of Top_Morse is
   -- square wave generator, gated by output_bit
   signal tone_clk      : std_logic := '0';
   signal tone_counter  : unsigned(19 downto 0) := (others => '0');
-  -- TONE_N 100 MHz / (2 × 440?Hz) = 113636, but we use this number multiplied by 4 to make the sound of a lower pitch
+  -- TONE_N 100 MHz / (2 × 440Hz) = 113636, but we use this number multiplied by 4 to make the sound of a lower pitch
   constant TONE_N      : unsigned(19 downto 0) := to_unsigned(909088, 20);
   
 begin
