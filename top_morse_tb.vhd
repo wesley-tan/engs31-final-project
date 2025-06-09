@@ -25,9 +25,9 @@ architecture sim of tb_top_morse is
   -----------------------------------------------------------------------------
   --  Simulation constants
   -----------------------------------------------------------------------------
-  constant CLK_PERIOD  : time := 10 ns;           -- 1?MHz
+  constant CLK_PERIOD  : time := 10 ns;           
   constant clk_period_divided : time := 1000 ns;
-  constant BAUD_PERIOD: integer:= 104;      -- 9600?baud
+  constant BAUD_PERIOD: integer:= 104;      -- 9600baud
     
 
   -----------------------------------------------------------------------------
@@ -61,13 +61,8 @@ begin
       sound_out => sound_out_s
     );
 
-  ---------------------------------------------------------------------------
-  --  Stimulus process : sends "SOS" over UART
-  ---------------------------------------------------------------------------
+
   stim : process
-    -------------------------------------------------------------------------
-    -- helper to transmit one 8-N-1 UART byte (LSB first)
-    -------------------------------------------------------------------------
    
     begin
     
