@@ -1,4 +1,4 @@
--- tb_queue.vhd  - comprehensive test bench for Queue (depth 20)
+-- tb_queue.vhd 
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
@@ -73,7 +73,7 @@ begin
       Write        <= '1';
       wait for CLK_PER;
       Write        <= '0';
-      wait for 3*CLK_PER;   -- small gap like your original code
+      wait for 3*CLK_PER;  
     end procedure;
 
     procedure pop is
@@ -91,7 +91,7 @@ begin
       push(std_logic_vector(to_unsigned(i,8)));
     end loop;
 
-    -- 2.  Attempt an extra write while Full='1'  (ignored)
+    -- 2.  Attempt an extra write while Full='1'
     push(x"8C");
 
     -- 3.  Pop two bytes
