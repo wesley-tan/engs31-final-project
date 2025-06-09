@@ -66,7 +66,7 @@ begin
   --  Stimulus
   -----------------------------------------------------------------
   stim_proc : process
-    -- simple helpers (in-line, no sub-programs)
+    -- simple helpers
     procedure push(constant b : STD_LOGIC_VECTOR) is
     begin
       parallel_out <= b;
