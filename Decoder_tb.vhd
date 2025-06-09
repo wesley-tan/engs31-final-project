@@ -43,9 +43,7 @@ begin
       decoded_out => decoded_out
     );
 
-  -----------------------------------------------------------------
-  --  100?MHz clock
-  -----------------------------------------------------------------
+
   clk_proc : process
   begin
     clk <= '0'; wait for CLK_PER/2;
@@ -79,7 +77,7 @@ begin
     data_out <= x"41"; read <= '1';  wait for CLK_PER;
     read <= '0';                     wait for 30 ns;
 
-    wait;                             -- keep simulation running
+    wait;                          
   end process;
 
 end architecture;
