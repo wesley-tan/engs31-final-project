@@ -34,7 +34,7 @@ architecture testbench of Queue_tb is
   signal Empty        : STD_LOGIC;
   signal Full         : STD_LOGIC;
 
-  constant CLK_PER : time := 10 ns;  -- 100 MHz (matches your 5 ns half-cycles)
+  constant CLK_PER : time := 10 ns;  -- 100 MHz
 
 begin
   -----------------------------------------------------------------
