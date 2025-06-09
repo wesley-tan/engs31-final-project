@@ -11,7 +11,7 @@ end entity;
 architecture sim of tb_top_morse is
 
   -----------------------------------------------------------------------------
-  --  DUT component declaration
+  --  UUT component declaration
   -----------------------------------------------------------------------------
   component Top_Morse is
     port (
