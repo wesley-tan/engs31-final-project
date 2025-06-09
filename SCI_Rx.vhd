@@ -212,7 +212,7 @@ begin
   ---------------------------------------
   baud_check: process(baud_counter, tc_en)
   begin
-    tc_baud <= '0';
+    tc_baud <= '0'; --check counter and set flag when that flag is enabled 
     if tc_en = '1' and baud_counter = BAUD_PERIOD - 1 then
       tc_baud <= '1';
     end if;
@@ -228,7 +228,7 @@ begin
 
   bit_check: process(bit_counter)
   begin
-    tc_bit <= '0';
+    tc_bit <= '0'; --check the number of bits 
     if bit_counter = BIT_COUNT-1 then
       tc_bit <= '1';
     end if;
