@@ -36,7 +36,7 @@ architecture testbench of controller_fsm_tb is
 
 begin
   -----------------------------------------------------------------
-  --  Instantiate DUT
+  --  Instantiate UUT
   -----------------------------------------------------------------
   uut : controller_fsm
     port map (
