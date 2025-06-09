@@ -31,7 +31,7 @@ architecture sim of tb_top_morse is
     
 
   -----------------------------------------------------------------------------
-  --  DUT I/O signals
+  --  UUT I/O signals
   -----------------------------------------------------------------------------
   signal clk       : std_logic := '0';
   signal rx        : std_logic := '1';  -- UART line idles high
