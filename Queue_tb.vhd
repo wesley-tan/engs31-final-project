@@ -13,7 +13,7 @@ architecture testbench of Queue_tb is
   -----------------------------------------------------------------
   component Queue is
     port (
-      clk          : in  STD_LOGIC;               -- 10MHz clock (100 ns)
+      clk          : in  STD_LOGIC;               
       Write        : in  STD_LOGIC;
       read         : in  STD_LOGIC;
       parallel_out : in  STD_LOGIC_VECTOR(7 downto 0);
@@ -66,7 +66,7 @@ begin
   --  Stimulus
   -----------------------------------------------------------------
   stim_proc : process
-    -- simple helpers
+    -- simple helpers to push and pop
     procedure push(constant b : STD_LOGIC_VECTOR) is
     begin
       parallel_out <= b;
@@ -85,7 +85,7 @@ begin
     end procedure;
   begin
     -----------------------------------------------------------------
-    -- 1.  Fill the FIFO with 20 bytes (0x00 .. 0x13)
+    -- 1.  Fill the FIFO with 20 bytes 
     -----------------------------------------------------------------
     for i in 0 to 19 loop
       push(std_logic_vector(to_unsigned(i,8)));
@@ -109,11 +109,11 @@ begin
     -- 6.  Extra pop when Empty = '1'  (ignored)
     pop;
 
-    -- 7.  Final push / pop to confirm continued operation
+    
     push(x"FF");
     pop;
 
-    wait;                              -- end of test bench
+    wait;                              
   end process;
 
 end testbench;
